@@ -1,6 +1,8 @@
 package com.yuanyang;
 
-import javax.swing.plaf.ViewportUI;
+import com.yuanyang.constant_pool.ConstantItem;
+import com.yuanyang.constant_pool.ConstantPool;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -8,12 +10,13 @@ public class ClassFile {
 
     private int minorVersion;
     private int majorVersion;
-    private ConstantItem[] constantPool;
+    private ConstantPool constantPool;
     private int accessFlags;
     private String clz;
     private String parent;
     private String[] interfaces;
     private FieldItem[] fields;
+    private MethodItem[] methods;
 
     public static ClassFile from(InputStream inputStream) throws IOException {
         int magic = StreamUtils.readU4(inputStream);
@@ -23,16 +26,7 @@ public class ClassFile {
         ClassFile classFile = new ClassFile();
         classFile.minorVersion = StreamUtils.readU2(inputStream);
         classFile.majorVersion = StreamUtils.readU2(inputStream);
-        /*
-        需要特别注意，class文件中的索引都是从1开始的，但是数组是从0开始的，所以在通过索引找值时需要将索引-1
-         */
-        int constantPoolSize = StreamUtils.readU2(inputStream) - 1;
-        ConstantItem[] constantPool = new ConstantItem[constantPoolSize];
-        int index = 0;
-        while (index < constantPoolSize) {
-            constantPool[index] = ConstantItemFactory.create(StreamUtils.readU1(inputStream), inputStream);
-            index++;
-        }
+        ConstantPool constantPool = new ConstantPool(ConstantPoolParser.parse(inputStream));
         classFile.constantPool = constantPool;
         // 类的访问符
         classFile.accessFlags = StreamUtils.readU2(inputStream);
@@ -48,9 +42,17 @@ public class ClassFile {
         }
         // 获取字段
         int fieldCount = StreamUtils.readU2(inputStream);
+        FieldParser fieldParser = new FieldParser();
         classFile.fields = new FieldItem[fieldCount];
         for (int i = 0; i < fieldCount; i++) {
-            classFile.fields[i] = FieldFactory.createField(inputStream, constantPool);
+            classFile.fields[i] = fieldParser.parse(inputStream, constantPool);
+        }
+
+        int methodCount = StreamUtils.readU2(inputStream);
+        MethodParser methodParser = new MethodParser();
+        classFile.methods = new MethodItem[methodCount];
+        for (int i = 0; i < methodCount; i++) {
+            classFile.methods[i] = methodParser.parse(inputStream, constantPool);
         }
 
         return null;

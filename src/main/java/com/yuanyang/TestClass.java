@@ -10,6 +10,12 @@ public class TestClass implements Serializable {
     private byte aByte = 11;
     private char aChar = 'a';
 
+    private int getValue() {
+        int a = 1;
+        int b = 2;
+        return a + b;
+    }
+
 
 //    private long longV = 2L;
 //    private short aShort = 3;
