@@ -1,8 +1,11 @@
 package com.yuanyang;
 
-public class TestClass {
+import java.io.Serializable;
 
-    private int integer = 1;
+public class TestClass implements Serializable {
+
+    private static final int integer = 123;
+    private static final int integer1 = 2000;
     private boolean aBoolean = true;
     private byte aByte = 11;
     private char aChar = 'a';

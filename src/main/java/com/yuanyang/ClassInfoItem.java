@@ -7,4 +7,8 @@ public class ClassInfoItem extends ConstantItem {
     public ClassInfoItem(int index) {
         this.index = index;
     }
+
+    public int getIndex() {
+        return index;
+    }
 }

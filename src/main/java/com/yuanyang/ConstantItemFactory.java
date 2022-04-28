@@ -38,7 +38,7 @@ public class ConstantItemFactory {
     private static ConstantItem parseField(InputStream inputStream) throws IOException {
         int classIndex = StreamUtils.readU2(inputStream);
         int nameAndTypeIndex = StreamUtils.readU2(inputStream);
-        return new FieldItem(classIndex, nameAndTypeIndex);
+        return new FieldRefItem(classIndex, nameAndTypeIndex);
     }
 
     private static ConstantItem parseInterface(InputStream inputStream) throws IOException {
@@ -92,7 +92,7 @@ public class ConstantItemFactory {
     private static ConstantItem parseUTF8(InputStream inputStream) throws IOException {
         int length = StreamUtils.readU2(inputStream);
         byte[] bytes = new byte[length];
-        StreamUtils.readBytes(bytes, inputStream);
+        inputStream.read(bytes, 0, length);
         return new UTF8Item(new String(bytes, StandardCharsets.UTF_8));
     }
 }

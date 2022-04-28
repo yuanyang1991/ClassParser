@@ -1,6 +1,6 @@
 package com.yuanyang;
 
-public abstract class ConstantItem {
+public class ConstantItem {
 
 
 }
