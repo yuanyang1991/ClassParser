@@ -22,8 +22,8 @@ public class AttributeParser implements Parser<Attribute> {
     private static final String CONSTANT_VALUE_SOURCEFILE = "SourceFile";
     private static final String CONSTANT_VALUE_SOURCEDEBUGEXTENSION = "SourceDebugExtension";
     private static final String CONSTANT_VALUE_LINENUMBERTABLE = "LineNumberTable";
-    private static final String CONSTANT_VALUE_LOCALVARIABLETABLE = "LocalVariableTable";
-    private static final String CONSTANT_VALUE_LOCALVARIABLETYPETABLE = "LocalVariableTypeTable";
+    private static final String LOCAL_VARIABLE_TABLE = "LocalVariableTable";
+    private static final String LOCAL_VARIABLE_TYPE_TABLE = "LocalVariableTypeTable";
     private static final String CONSTANT_VALUE_DEPRECATED = "Deprecated";
     private static final String CONSTANT_VALUE_RUNTIMEVISIBLEANNOTATIONS = "RuntimeVisibleAnnotations";
     private static final String CONSTANT_VALUE_RUNTIMEINVISIBLEANNOTATIONS = "RuntimeInvisibleAnnotations";
@@ -39,9 +39,19 @@ public class AttributeParser implements Parser<Attribute> {
         int length = StreamUtils.readU4(inputStream);
         if (CONSTANT_VALUE_NAME.equals(name)) {
             return getConstantValueAttribute(inputStream, constantPool);
-        } else if (CONSTANT_VALUE_CODE.equals(name)){
-            byte[] data = new byte[length];
-            inputStream.read(data);
+        } else if (CONSTANT_VALUE_CODE.equals(name)) {
+            int maxStack = StreamUtils.readU2(inputStream);
+            int maxLocals = StreamUtils.readU2(inputStream);
+            int codeLen = StreamUtils.readU4(inputStream);
+            int[] instructions = new int[codeLen];
+            for (int i = 0; i < codeLen; i++) {
+                instructions[i] = inputStream.read();
+            }
+            return new CodeAttribute(length, maxStack, maxLocals, instructions);
+        } else if (LOCAL_VARIABLE_TABLE.equals(name)) {
+
+        } else if (LOCAL_VARIABLE_TYPE_TABLE.equals(name)) {
+
         } else {
             byte[] data = new byte[length];
             inputStream.read(data);
