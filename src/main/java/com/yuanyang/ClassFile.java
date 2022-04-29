@@ -55,7 +55,7 @@ public class ClassFile {
             classFile.methods[i] = methodParser.parse(inputStream, constantPool);
         }
 
-        return null;
+        return classFile;
 
     }
 }
